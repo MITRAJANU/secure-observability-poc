@@ -1,0 +1,24 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_URL: amqp://rabbitmq
+      AWS_REGION: ap-south-1
+
+  worker:
+    build: ./worker
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_URL: amqp://rabbitmq
+      AWS_REGION: ap-south-1
